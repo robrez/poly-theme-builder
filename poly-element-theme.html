@@ -65,13 +65,6 @@ Example:
       cursor: pointer;
     }
 
-    paper-dialog {
-      position: fixed;
-      width: 80vw;
-      /*min-height: 40vh;
-      width: 80vh;*/
-    }
-
     .card {
       background-color: #FFF;
       @apply(--shadow-elevation-2dp);
@@ -100,10 +93,6 @@ Example:
       max-width: 100%;
       @apply(--layout-horizontal);
       @apply(--layout-wrap);
-    }
-
-    #colorpickerdialog {
-      position: fixed;
     }
 
     @media (min-width: 496px) {
@@ -158,24 +147,7 @@ Example:
         </div>
       </div>
     </template>
-  </horizontal-section>
-
-  <paper-dialog id="colorpickerdialog" modal>
-    <div>
-     <div class="title">[[_selectedProperty.property.name]]</div>
-     <div class="caption">[[_selectedProperty.property.description]]</div>
-    </div>
-
-    <paper-dialog-scrollable>
-      <poly-color-picker id="colorpicker" all-properties="[[allProperties]]" color-palettes="[[colorPalettes]]">
-      </poly-color-picker>
-    </paper-dialog-scrollable>
-
-    <div class="buttons">
-      <paper-button dialog-dismiss>Cancel</paper-button>
-      <paper-button dialog-confirm autofocus on-tap="_onColorChanged">OK</paper-button>
-    </div>
-  </paper-dialog>
+  </div>
 
 </template>
 
@@ -293,7 +265,7 @@ Example:
       }
     },
 
-    _updateElementProperties(elementData, change) {
+    _updateElementProperties: function(elementData, change) {
       var allProperties = change.base;
       var eProps = this._elementProperties;
       var idx = change.path.indexOf(".");
@@ -320,7 +292,7 @@ Example:
           if(!item.mixin) {
             var value = allProperties[item.name] || item.default;
             var active = item.default !== value && this._computeColorValue(item.default) !== this._computeColorValue(value);
-            eProps.push({ property: item, value: value, global: global, active: active, index: index });
+            eProps.push({ property: item, value: value, global: global, active: active, index: eProps.length });
           }
         }.bind(this));
         this.set("_elementProperties", eProps);
@@ -343,9 +315,21 @@ Example:
     _pickColor: function(e, detail) {
       var item = e.model.item;
       this.set("_selectedProperty", item);
-      var cp = this.$.colorpicker;
-      cp.value = item.value;
-      this.$.colorpickerdialog.open();
+      //var cp = this.$.colorpicker;
+      //cp.value = item.value;
+      //this.$.colorpickerdialog.open();
+      //was having some serious sizing/positioning problems w/ dialogs in FF.
+      //had to move the dialog one level up to our parent element and use
+      //this callback approach instead.
+      var callback = function(detail) {
+        this._onColorChanged(detail);
+      }.bind(this);
+      this.fire("pick-color", { property: item.property, value: item.value, callback: callback });
+    },
+
+    _onColorChanged: function(value) {
+      var prop = this._selectedProperty;
+      this._updatePropertyValue(prop, value, true);
     },
 
     _computeColorValue: function(color) {
@@ -356,12 +340,6 @@ Example:
         }
       }
       return color.toLowerCase();
-    },
-
-    _onColorChanged: function(e, detail) {
-      var value = this.$.colorpicker.value;
-      var prop = this._selectedProperty;
-      this._updatePropertyValue(prop, value, true);
     },
 
     _updatePropertyValue: function(prop, value, activate) {

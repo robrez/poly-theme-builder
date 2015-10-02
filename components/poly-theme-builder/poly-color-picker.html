@@ -1,0 +1,249 @@
+<!--
+`poly-color-picker` is used by poly-theme-builder to select colors from a palette
+
+Example:
+
+    <poly-color-picker value="{{value}}">
+    </poly-color-picker>
+
+@group Poly Theme Builder
+@element poly-color-picker
+-->
+<dom-module id="poly-color-picker">
+
+<template>
+  <style>
+    :host {
+      position: relative;
+      display: block;
+      color: rgba(0,0,0,.87);
+    }
+
+    .subhead {
+      @apply(--paper-font-subhead);
+    }
+
+    .caption {
+      @apply(--paper-font-caption);
+      color: var(--secondary-text-color, #727272);
+    }
+
+    .color {
+      box-sizing: border-box;
+      height: 100%;
+      width: 100%;
+      border-radius: 2px;
+    }
+    .color-container {
+      box-sizing: border-box;
+      height: 48px;
+      width: 48px;
+      padding: 2px;
+      background-color: #fff;
+      border-radius: 2px;
+      border: solid 2px #b6b6b6;
+      cursor: pointer;
+    }
+
+    .color-name {
+      padding-left: 8px;
+      white-space: nowrap;
+    }
+    .tone-name {
+      padding-left: 8px;
+      white-space: nowrap;
+      width: 56px;
+      overflow: hidden;
+    }
+
+    .color-item {
+      margin: 8px;
+    }
+
+    .color-item.iron-selected .color-container {
+      background-color: dodgerblue;
+      border-color: dodgerblue;
+    }
+
+    .footer {
+      border-top: solid 1px #b6b6b6;
+      padding: 8px 0;
+      margin-top: 8px;
+    }
+
+    .indent {
+      padding-left: 8px;
+    }
+  </style>
+
+
+  <paper-dropdown-menu label="Selected Palette">
+    <paper-menu class="dropdown-content" attr-for-selected="data-name" selected="{{_selectedPaletteName}}">
+      <template is="dom-repeat" items="[[_paletteNames]]">
+        <paper-item data-name$="[[item.name]]">
+        <div class="layout horizontal center">
+          <div class="color-container">
+            <div class="color" style$="[[_computeColorStyle(item.primary)]]"></div>
+          </div>
+          <div class="color-name">{{item.name}}</div>
+        </div>
+        </paper-item>
+      </template>
+    </paper-menu>
+  </paper-dropdown-menu>
+
+  <iron-selector class="layout horizontal wrap" attr-for-selected="data-value" selected="{{value}}">
+   <template is="dom-repeat" items="[[_selectedPaletteTones]]">
+      <div class="color-item layout horizontal center" data-value$="[[item.value]]">
+        <div class="color-container">
+          <div class="color" style$="[[_computeColorStyle(item.value)]]"></div>
+        </div>
+        <div class="tone-name">
+         <div>{{item.tone}}</div>
+         <div class="caption">[[_computeColorValue(item.value)]]</div>
+        </div>
+      </div>
+    </template>
+  </iron-selector>
+
+  <div class="footer">
+    <div class="color-item layout horizontal center">
+      <div class="color-container">
+        <div class="color" style$="{{_computeColorStyle(value)}}"></div>
+      </div>
+      <!--<div class="color-name">{{value}}</div>-->
+      <div class="color-name flex-auto">
+        <paper-input label="Selected Color" value="{{value::input}}"></paper-input>
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<script>
+(function() {
+
+  Polymer({
+
+    is: "poly-color-picker",
+
+    properties: {
+      /**
+       * A key-value store for custom properties
+       */
+      allProperties: {
+        type: Object
+      },
+      /**
+       * Collection of color palette data
+       */
+      colorPalettes: {
+        type: Object
+      },
+      /**
+       * A list of color palette names
+       */
+      _paletteNames: {
+        type: Array,
+        computed: '_computePaletteNames(colorPalettes)'
+      },
+      /**
+       * Name of the currently selected color palette
+       */
+      _selectedPaletteName: {
+        type: String,
+        value: null
+      },
+      /**
+       * A list of colors in the currently selected palette
+       */
+      _selectedPaletteTones: {
+        type: Array,
+        computed: '_computeSelectedPaletteTones(_selectedPaletteName, colorPalettes)'
+      },
+      /**
+       * The selected color value
+       */
+      value: {
+        type: String
+      }
+    },
+
+    observers: [
+      '_onPaletteSelectionChanged(_selectedPaletteName, _paletteNames)'
+    ],
+
+    _computeSelectedPaletteTones: function(_selectedPaletteName, colorPalettes) {
+      if(_selectedPaletteName && colorPalettes) {
+        var tones = colorPalettes[_selectedPaletteName];
+        return tones;
+      } else {
+        return null;
+      }
+    },
+
+    _computePaletteNames: function(colorPalettes) {
+      if(colorPalettes) {
+        var pn = [];
+        Object.keys(colorPalettes).forEach(function(key) {
+          var filtered = colorPalettes[key].filter(function(item) {
+            return item.tone === "500";
+          });
+          var primary;
+          if(filtered && filtered.length) {
+            primary = filtered[0].value;
+          } else {
+            primary = colorPalettes[key][0];
+          }
+          pn.push({ name: key, primary: primary });
+        });
+        return pn;
+      } else {
+        return null;
+      }
+    },
+
+    _onPaletteSelectionChanged: function(paletteName, paletteNames) {
+      var val;
+      for(var i = 0; i < paletteNames.length; i++) {
+        var item = paletteNames[i];
+        if(item.name === paletteName) {
+          val = item.primary;
+          break;
+        }
+      }
+      if(val) {
+        var asyncF = function() {
+          this.value = val;
+        }.bind(this);
+        this.async(asyncF);
+      }
+    },
+
+    _computeColorStyle: function(color) {
+      color = this._computeColorValue(color);
+      if(color && color.length) {
+        return "background-color: " + color + ";";
+      } else {
+        return "";
+      }
+    },
+
+    //TODO this should be a mixin
+    _computeColorValue: function(color) {
+      color = color || "";
+      if(color && color.length) {
+        if(color.charAt(0) === "-"
+            && color.charAt(1) === "-") {
+          color = this.allProperties[color];
+        }
+      }
+      return color.toLowerCase();
+    }
+
+  });
+
+})();
+</script>
+
+</dom-module>

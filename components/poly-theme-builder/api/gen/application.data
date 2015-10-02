@@ -1,0 +1,17 @@
+
+application-global
+this was manually written by me
+Some of the default values are made up
+Custom property | Description | Default
+----------------|-------------|----------
+`--dark-primary-color` | Dark primary color (700) | `--paper-indigo-700`
+`--default-primary-color` | Default primary color (500) | `--paper-indigo-500`
+`--light-primary-color` | Light primary color (100) | `--paper-indigo-100`
+`--text-primary-color` | Color of icons and text in app toolbar | `#ffffff`
+`--accent-color` | Accent color | `--paper-pink-a200`
+`--primary-background-color` | Primary background color | `#ffffff`
+`--primary-text-color` | Primary text color | `#212121`
+`--secondary-text-color` | Secondary text color | `#727272`
+`--disabled-text-color` | Disabled text color | `#bdbdbd`
+`--divider-color` | Divider color | `#B6B6B6`
+

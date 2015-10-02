@@ -1,0 +1,47 @@
+{
+  "name": "poly-theme-builder",
+  "authors": [
+    "Rob Resendez <resendez.java@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/robrez/poly-theme-builder",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "keywords": [
+    "web-components",
+    "web-component",
+    "poly-theme-builder"
+  ],
+  "main": [
+    "poly-theme-builder.html"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/robrez/poly-theme-builder"
+  },
+  "dependencies": {
+    "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-icon": "PolymerElements/iron-icon#^1.0.0",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^1.0.0",
+    "iron-pages": "PolymerElements/iron-pages#^1.0.0",
+    "iron-selector": "PolymerElements/iron-selector#^1.0.0",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.5",
+    "polymer": "polymer/polymer#^1.1.2"
+  },
+  "_release": "fc064b4b0d",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "fc064b4b0d115fd2ce0e5b64cc03660f9d47d310"
+  },
+  "_source": "git://github.com/robrez/poly-theme-builder.git",
+  "_target": "master",
+  "_originalSource": "robrez/poly-theme-builder",
+  "_direct": true
+}

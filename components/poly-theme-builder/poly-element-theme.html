@@ -1,0 +1,414 @@
+<!--
+`poly-element-theme` is used by poly-theme-builder to configure custom properties supported by a given element
+
+Example:
+
+    <poly-element-theme
+        color-palettes="[[colorPalettes]]"
+        all-properties="[[_styleProps]]"
+        element-name="application"
+        data="[[data]]">
+    </poly-element-theme>
+
+@group Poly Theme Builder
+@element poly-element-theme
+-->
+<dom-module id="poly-element-theme">
+
+<template>
+  <style>
+    :host {
+      position: relative;
+      display: block;
+      color: var(--primary-text-color, rgba(0,0,0,.87));
+    }
+
+    .title-section {
+      margin-left: 24px;
+      margin-right: 24px;
+      width: 448px;
+    }
+    .title {
+      @apply(--paper-font-title);
+    }
+    .subtitle {
+      @apply(--paper-font-body1);
+      color: var(--secondary-text-color, rgba(0,0,0,.54));
+    }
+    .subhead {
+      @apply(--paper-font-subhead);
+    }
+    .caption {
+      @apply(--paper-font-caption);
+      color: var(--secondary-text-color, rgba(0,0,0,.54));
+    }
+    .body2 {
+      @apply(--paper-font-body2);
+    }
+
+    .color {
+      box-sizing: border-box;
+      height: 100%;
+      width: 100%;
+      border-radius: 2px;
+    }
+
+    .color-container {
+      box-sizing: border-box;
+      height: 48px;
+      width: 48px;
+      padding: 2px;
+      background-color: #fff;
+      border-radius: 2px;
+      border: solid 2px #b6b6b6;
+      border-color: var(--divider-color);
+      cursor: pointer;
+    }
+
+    paper-dialog {
+      position: fixed;
+      width: 80vw;
+      /*min-height: 40vh;
+      width: 80vh;*/
+    }
+
+    .card {
+      background-color: #FFF;
+      @apply(--shadow-elevation-2dp);
+      border-radius: 2dp;
+      box-sizing: border-box;
+      width: 448px;
+      margin: 24px;
+    }
+
+    .header {
+      padding: 16px;
+      border-bottom: solid 1px #b6b6b6;
+      border-bottom-color: var(--divider-color);
+    }
+
+    .detail {
+      padding: 16px;
+    }
+
+    .horizontal-section {
+      @apply(--layout-horizontal);
+      @apply(--layout-wrap);
+    }
+
+    #sectionToggleContainer {
+      padding-right: 16px;
+    }
+  </style>
+
+  <div class="title-section layout horizontal justified center wrap">
+    <div>
+      <div class="title">Properties</div>
+      <div class="subtitle">[[elementName]]</div>
+    </div>
+
+    <div id="sectionToggleContainer">
+      <paper-toggle-button checked="[[_sectionActive]]" on-change="_onSectionActiveToggle"></paper-toggle>
+    </div>
+  </div>
+  <div class="horizontal-section">
+    <template is="dom-repeat" items="[[_elementProperties]]" as="item">
+      <div class="card">
+        <div class="header">
+          <div class="subhead">[[item.property.name]]</div>
+          <div class="caption">[[item.property.description]]</div>
+        </div>
+        <div class="detail">
+          <div class="body2" hidden$="[[item.active]]">[[item.property.default]]</div>
+          <div class="body2" hidden$="[[!item.active]]">[[item.value]]</div>
+          <div class="layout horizontal justified wrap center">
+
+            <div>
+              <div class="color-container" on-tap="_pickColor">
+                <div class="color" style$="[[_computeColorStyle(item.value, item.property.default, item.active, allProperties.*)]]">
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <paper-toggle-button checked="{{item.active}}" on-change="_onActiveChanged"></paper-toggle-button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </template>
+  </horizontal-section>
+
+  <paper-dialog id="colorpickerdialog" modal>
+    <div>
+     <div class="title">[[_selectedProperty.property.name]]<div>
+     <div class="caption">[[_selectedProperty.property.description]]<div>
+    <div>
+    <poly-color-picker id="colorpicker" all-properties="[[allProperties]]" color-palettes="[[colorPalettes]]">
+    </poly-color-picker>
+    <div class="buttons">
+      <paper-button dialog-dismiss>Cancel</paper-button>
+      <paper-button dialog-confirm autofocus on-tap="_onColorChanged">OK</paper-button>
+    </div>
+  </paper-dialog>
+
+</template>
+
+<script>
+(function() {
+
+  Polymer({
+    is: "poly-element-theme",
+    /**
+     * Fired to trigger a customStyle update
+     *
+     * @event update-property
+     */
+
+    properties: {
+
+      /**
+       * Name of the element being configured
+       */
+      elementName: {
+        type: String
+      },
+
+      /**
+       * Meta information about custom properties supported
+       * by various elements.
+       */
+      data: {
+        type: Array
+      },
+
+      /**
+       * The data array filtered down to just those items that
+       * are applicable to `elementName`
+       */
+      elementData: {
+        type: Object,
+        computed: "_computeElementData(elementName, data)"
+      },
+
+      /**
+       * Model containing state information / configuration settings
+       * for the given element's custom properties
+       */
+      _elementProperties: {
+        type: Array,
+        value: function() { return null; }
+      },
+
+      /**
+       * A key-value store for custom properties
+       */
+      allProperties: {
+        type: Object
+      },
+
+      /**
+       * Collection of color palette data
+       */
+      colorPalettes: {
+        type: Object
+      },
+
+      /**
+       * Property currently being configured
+       */
+      _selectedProperty: {
+        type: Object
+      },
+
+      /**
+       * Whether to use any properties for the given element
+       */
+      _sectionActive: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    observers: [
+      '_updateElementProperties(elementData, allProperties.*)',
+      '_onAnyActiveChanged(_elementProperties.*)',
+    ],
+
+    _onAnyActiveChanged: function(change) {
+      if(change.path.indexOf(".active")) {
+        var props = this._elementProperties;
+        var any = false;
+        if(props && props.length) {
+          for(var i = 0; i < props.length; i++) {
+            var prop = props[i];
+            if(!prop.mixin && prop.active) {
+              any = true;
+              break;
+            }
+         }
+        }
+        this._sectionActive = any;
+      }
+    },
+
+    _onSectionActiveToggle: function(e, detail) {
+      var val = e.target.checked || false;
+      var props = this._elementProperties;
+      props.forEach(function(prop, index) {
+        if(!prop.mixin) {
+          prop.active = val;
+          this._updatePropertyActive(prop, val);
+        }
+      }.bind(this));
+    },
+
+    _computeElementData: function(elementName, data) {
+      if(elementName && data && data.length) {
+        var filtered = data.filter(function(item) {
+          return item.element === elementName;
+        });
+
+        if(filtered && filtered.length) {
+          return filtered[0];
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    },
+
+    _updateElementProperties(elementData, change) {
+      var allProperties = change.base;
+      var eProps = this._elementProperties;
+      var idx = change.path.indexOf(".");
+      if(eProps && idx !== -1) {
+        var propName = change.path.substring(idx + 1);
+        eProps.forEach(function(item) {
+          if(!item.mixin && !item.active && item.property.default === propName) {
+            this._updatePropertyValue(item, change.value, false);
+          }
+        }.bind(this));
+        //can't seem to delete a custom property value once its been set
+        //  so we need to re-set it.  this is pretty awful... find a better way :)
+        return;
+      }
+
+
+      if(elementData && elementData.properties && allProperties) {
+        var global = elementData.element === "application";
+        var props = elementData.properties;
+        eProps = [];
+        props.forEach(function(item, index) {
+          //TODO implement mixins
+          //TODO implement non-color properties
+          if(!item.mixin) {
+            var value = allProperties[item.name] || item.default;
+            var active = item.default !== value && this._computeColorValue(item.default) !== this._computeColorValue(value);
+            eProps.push({ property: item, value: value, global: global, active: active, index: index });
+          }
+        }.bind(this));
+        this.set("_elementProperties", eProps);
+      }
+    },
+
+    _computeColorStyle: function(color, defaultColor, active, propChange) {
+      if(active) {
+        color = this._computeColorValue(color);
+      } else {
+        color = this._computeColorValue(defaultColor);
+      }
+      if(color && color.length) {
+        return "background-color: " + color + ";";
+      } else {
+        return "";
+      }
+    },
+
+    _pickColor: function(e, detail) {
+      var item = e.model.item;
+      this.set("_selectedProperty", item);
+      var cp = this.$.colorpicker;
+      cp.value = item.value;
+      this.$.colorpickerdialog.open();
+    },
+
+    _computeColorValue: function(color) {
+      if(color && color.length) {
+        if(color.charAt(0) === "-"
+            && color.charAt(1) === "-") {
+          color = this.allProperties[color];
+        }
+      }
+      return color.toLowerCase();
+    },
+
+    _onColorChanged: function(e, detail) {
+      var value = this.$.colorpicker.value;
+      var prop = this._selectedProperty;
+      this._updatePropertyValue(prop, value, true);
+    },
+
+    _updatePropertyValue: function(prop, value, activate) {
+      if(prop && value) {
+        var idx = prop.index;
+        value = this._computeColorValue(value);
+        if(activate) {
+          this.set("_elementProperties." + idx + ".active", true);
+        }
+        this.set("_elementProperties." + idx + ".value", value);
+        this.fire("update-property", { property: prop.property.name, value: value, global: prop.global, active: true });
+      }
+    },
+
+    _findElementPropertyIndex: function(prop) {
+      var ep = this._elementProperties;
+      if(ep && ep.length) {
+        for(var i = 0; i < ep.length; i++) {
+          if(ep[i].property.name === prop.property.name) {
+            return i;
+          }
+        }
+      }
+      return -1;
+    },
+
+    _updatePropertyActive: function(prop, active) {
+      this.set("_elementProperties." + prop.index + ".active", active);
+      var value;
+      if(active) {
+        value = prop.value;
+      } else {
+        value = this._computeColorValue(prop.property.default);
+      }
+      this.fire("update-property", { property: prop.property.name, value: value, global: prop.global, active: active });
+    },
+
+    _onActiveChanged: function(e, detail) {
+      var prop = e.model.item;
+      this._updatePropertyActive(prop, prop.active);
+    },
+
+    /**
+     * Get a list of properties that have been configured and activated
+     */
+    getActiveProperties: function() {
+      var props = this._elementProperties;
+      if(props && props.length) {
+        return props.filter(function(item) {
+          return item.active;
+        });
+      } else {
+        return null;
+      }
+    }
+
+
+  });
+
+})();
+</script>
+
+</dom-module>

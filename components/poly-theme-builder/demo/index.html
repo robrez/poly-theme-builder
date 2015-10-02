@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+<!--
+    <link rel="icon" 
+      type="image/png" 
+      href="favicon.ico">
+-->
+
+    <style>
+      html {
+          font-family: 'RobotoDraft','Roboto','Helvetica Neue', Helvetica, Sans-Serif;
+          font-size: 100%;
+          line-height: 1.5;
+      }
+    </style>
+
+    <link rel="import" href="../poly-theme-builder.html">
+    <link rel="import" href="styles/basic-theme.html">
+
+  </head>
+ 
+  <body fullbleed class="fullbleed layout vertical">
+
+    <template is="dom-bind" id="app">
+      <poly-theme-builder class="layout vertical fit">
+      </poly-theme-builder>
+    </template>
+
+    <script>
+      (function(document) {
+        'user strict';
+        var app = document.querySelector("#app");
+      })(document);
+    </script>
+  </body>
+</html>

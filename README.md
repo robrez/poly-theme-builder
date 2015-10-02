@@ -16,4 +16,5 @@ TODO:
 - [ ] Support mixin properties
 - [ ] Support non-color properties
 - [ ] Determine if there are better ways of reading / updating custom property information
+- [ ] Restructure some things, perhaps split up some elements. A couple of mixin behaviors are needed.
 

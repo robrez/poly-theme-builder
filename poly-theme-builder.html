@@ -1,0 +1,1006 @@
+<link rel="import" href="elements.html">
+<!--
+`poly-theme-builder` is an application that will build polymer themes
+
+Example:
+
+    <poly-theme-builder></poly-theme-builder>
+
+@group Poly Theme Builder
+@element paper-header-panel
+@demo demo/index.html
+-->
+<dom-module id="poly-theme-builder">
+<template>
+  <style>
+
+    :host {
+      position: relative;
+      display: block;
+      font-family: 'RobotoDraft', 'Helvetica Neue', Helvetica, Arial, Sans-Serif;
+      background-color: #eee;
+    }
+
+    .primary-text {
+      color: var(--primary-text-color, #212121);
+    }
+    .secondary-text {
+      color: var(--secondary-text-color, #727272);
+    }
+    .disabled-text {
+      color: var(--disabled-text-color, #bdbdbd);
+    }
+    .item {
+      padding: 16px;
+      border-top: solid 1px #b6b6b6;
+      border-top-color: var(--divider-color, #b6b6b6);
+    }
+    .item:first-child {
+      border-top: 0;
+    }
+
+    .title {
+      color: var(--primary-text-color, #212121);
+      @apply(--paper-font-title);
+      margin-left: 24px;
+      margin-right: 24px;
+    }
+    .toolbar-title {
+      @apply(--paper-font-title);
+    }
+    .toolbar-caption {
+      @apply(--paper-font-caption);
+    }
+    .card {
+      background-color: #fff;
+      box-sizing: border-box;
+      margin: 24px;
+      @apply(--shadow-elevation-2dp);
+      border-radius: 2px;
+    }
+
+    .demo-section {
+      margin: 24px;
+    }
+
+    iron-pages {
+      min-height: 90vh;
+    }
+
+    section[data-element] {
+      padding: 24px 0;
+      max-width: 496px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    .vertical-section {
+      padding: 24px;
+    }
+
+    paper-progress {
+      margin: 16px 0;
+    }
+
+    .horizontal-section-container {
+      @apply(--layout-horizontal);
+      @apply(--layout-wrap);
+    }
+
+    .horizontal-section {
+      @apply(--layout-vertical);
+      width: 200px;
+      padding: 24px;
+    }
+
+    .horizontal-section.center {
+      @apply(--layout-center);
+    }
+
+    .horizontal-section>* {
+      margin: 8px 0;
+    }
+
+    .icon-wrapper {
+      height: 48px;
+      width: 48px;
+      background-color: rgba(0,0,0,.2);
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      border-radius: 50%;
+    }
+    .icon-wrapper>iron-icon {
+      opacity: .6;
+    }
+
+    #saveDialog {
+      position: fixed;
+      width: 90vw;
+    }
+
+    .page-footer {
+      padding: 24px;
+      background-color: #666;
+      color: #FFF;
+      border-top: solid 8px #666;
+      border-top-color: var(--default-primary-color, #666);
+    }
+
+    .page-footer paper-icon-button {
+      color: #FFF;
+      fill: #FFF;
+      stroke: #FFF;
+    }
+
+    .page-footer a {
+      text-decoration: none;
+      color: #FFF;
+    }
+
+    .page-footer .a {
+      cursor: pointer;
+    }
+
+    @media (min-width: 1280px) {
+      /* 992 + 256 (drawer */
+
+      section[data-element] {
+        max-width: 992px;
+      }
+
+    }
+
+  </style>
+
+  <paper-drawer-panel id="drawerPanel" responsive-width="960px">
+
+    <paper-header-panel drawer>
+      <paper-toolbar class="medium-tall paper-header">
+          <div class="toolbar-title">
+            <div class="icon-wrapper">
+             <iron-icon icon="ptb-icons:polymer" alt="polymer" title="polymer"></iron-icon>
+            </div>
+          </div>
+          <div class="bottom">
+            <div class="toolbar-subhead">Theme Builder</div>
+            <div class="toolbar-caption">Choose an element</div>
+          </div>
+      </paper-toolbar>
+
+      <div class="layout vertical fit" class="content drawer">
+        <paper-menu attr-for-selected="data-element" selected="{{element}}">
+          <template is="dom-repeat" items="[[_elements]]">
+            <paper-item data-element$="[[item.element]]">[[item.desc]]</paper-item>
+          </template>
+        </paper-menu>
+      </div>
+    </paper-header-panel>
+
+    <paper-header-panel
+        class="layout vertical fit relative"
+        mode="standard"
+        id="mainPanel"
+        main
+        on-update-property="_updateProp">
+
+      <paper-toolbar class="paper-header">
+        <paper-icon-button icon="ptb-icons:menu" paper-drawer-toggle></paper-icon-button>
+        <div class="flex">
+          <div class="toolbar-title">Polymer Theme Builder</div>
+          <div class="toolbar-caption">[[_elementDesc]]</div>
+        </div>
+        <paper-icon-button icon="ptb-icons:file-download" on-tap="_onTapDownload"></paper-icon-button>
+      </paper-toolbar>
+
+      <iron-pages class="content" attr-for-selected="data-element" selected="{{element}}">
+
+        <section data-element="application">
+          <div>
+            <div class="title">Application Global Properties</div>
+            <div class="card">
+              <div class="item primary-text">A handful of global / application-wide properties impact many custom elements. A nice theme can be built just by playing with these properties.</div>
+              <div class="item primary-text">Primary Text</div>
+              <div class="item secondary-text">Secondary Text</div>
+              <div class="item disabled-text">Disabled Text</div>
+            </div>
+          </div>
+
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="application"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+        <section data-element="paper-checkbox">
+          <div class="horizontal-section-container">
+            <div>
+              <div class="title">Enabled</div>
+              <div class="card horizontal-section">
+                <paper-checkbox>Oxygen</paper-checkbox>
+                <paper-checkbox>Carbon</paper-checkbox>
+                <paper-checkbox checked>Hydrogen</paper-checkbox>
+                <paper-checkbox checked>Nitrogen</paper-checkbox>
+                <paper-checkbox checked>Calcium</paper-checkbox>
+              </div>
+            </div>
+            <div>
+              <div class="title">Disabled</div>
+              <div class="card horizontal-section">
+                <paper-checkbox disabled>Oxygen</paper-checkbox>
+                <paper-checkbox disabled>Carbon</paper-checkbox>
+                <paper-checkbox checked disabled>Hydrogen</paper-checkbox>
+                <paper-checkbox checked disabled>Nitrogen</paper-checkbox>
+                <paper-checkbox checked disabled>Calcium</paper-checkbox>
+              </div>
+            </div>
+          </div>
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-checkbox"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+        <section data-element="paper-radio-button">
+          <div class="horizontal-section-container">
+            <div>
+              <div class="title">Enabled</div>
+              <div class="horizontal-section card">
+                <paper-radio-button>Oxygen</paper-radio-button>
+                <paper-radio-button>Carbon</paper-radio-button>
+                <paper-radio-button checked>Hydrogen</paper-radio-button>
+                <paper-radio-button checked>Nitrogen</paper-radio-button>
+                <paper-radio-button checked>Calcium</paper-radio-button>
+              </div>
+            </div>
+
+            <div>
+              <div class="title">Disabled</div>
+              <div class="horizontal-section card">
+                <paper-radio-button disabled>Oxygen</paper-radio-button>
+                <paper-radio-button disabled>Carbon</paper-radio-button>
+                <paper-radio-button checked disabled>Hydrogen</paper-radio-button>
+                <paper-radio-button checked disabled>Nitrogen</paper-radio-button>
+                <paper-radio-button checked disabled>Calcium</paper-radio-button>
+              </div>
+            </div>
+          </div>
+
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-radio-button"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+
+        <section data-element="paper-tabs">
+          <div class="title">Tabs</div>
+
+          <div class="demo-section">
+            <paper-tabs selected="0">
+          
+              <paper-tab>ITEM ONE</paper-tab>
+              <paper-tab>ITEM TWO</paper-tab>
+              <paper-tab>ITEM THREE</paper-tab>
+  
+            </paper-tabs>
+          </div>
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-tabs"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-tab"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+
+
+        <section data-element="paper-progress">
+
+          <div class="title">Progress bar</div>
+          <div class="vertical-section card">
+            <paper-progress></paper-progress>
+            <paper-progress value="800" min="100" max="1000"></paper-progress>
+            <paper-progress value="300" secondary-progress="700" min="100" max="1000"></paper-progress>
+            <paper-progress disabled value="300" secondary-progress="700" min="100" max="1000"></paper-progress>
+          </div>
+
+          <div class="title">Indeterminate</div>
+          <div class="vertical-section card">
+            <paper-progress indeterminate></paper-progress>
+            <paper-progress indeterminate value="800" min="100" max="1000"></paper-progress>
+            <paper-progress indeterminate value="800" min="100" max="1000"></paper-progress>
+            <paper-progress disabled indeterminate></paper-progress>
+          </div>
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-progress"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+
+
+        <section data-element="paper-toolbar">
+          <div class="title">Toolbar</div>
+          <div class="demo-section">
+            <paper-toolbar>
+              <paper-icon-button icon="ptb-icons:menu"></paper-icon-button>
+              <span class="toolbar-title">Toolbar</span>
+              <paper-icon-button icon="ptb-icons:refresh"></paper-icon-button>
+              <paper-icon-button icon="ptb-icons:add">+</paper-icon-button>
+            </paper-toolbar>
+          </div>
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-toolbar"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+
+
+        <section data-element="paper-button">
+
+          <div class="horizontal-section-container">
+            <div>
+              <div class="title">Flat</div>
+              <div class="card horizontal-section">
+                <paper-button tabindex="0">button</paper-button>
+                <paper-button tabindex="0" class="colorful">colorful</paper-button>
+                <paper-button tabindex="0" disabled>disabled</paper-button>
+                <paper-button tabindex="0" noink>noink</paper-button>
+                <paper-button tabindex="0" class="colorful custom"><iron-icon icon="ptb-icons:check"></iron-icon>ok</paper-button>
+                <paper-button tabindex="0" class="custom"><iron-icon icon="ptb-icons:clear"></iron-icon>cancel</paper-button>
+        
+              </div>
+            </div>
+        
+            <div>
+              <div class="title">Raised</div>
+              <div class="card horizontal-section">
+                <paper-button tabindex="0" raised>button</paper-button>
+                <paper-button tabindex="0" raised class="colorful">colorful</paper-button>
+                <paper-button tabindex="0" raised disabled>disabled</paper-button>
+                <paper-button tabindex="0" raised noink>noink</paper-button>
+                <paper-button tabindex="0" raised class="colorful custom"><iron-icon icon="ptb-icons:check"></iron-icon>ok</paper-button>
+                <paper-button tabindex="0" raised class="custom"><iron-icon icon="ptb-icons:clear"></iron-icon>cancel</paper-button>
+              </div>
+            </div>
+        
+            <div>
+              <div class="title">Toggleable</div>
+              <div class="card horizontal-section">
+                <paper-button tabindex="0" toggles>button</paper-button>
+                <paper-button tabindex="0" toggles raised noink>noink</paper-button>
+                <paper-button tabindex="0" toggles active class="colorful">colorful</paper-button>
+                <paper-button tabindex="0" toggles raised active class="colorful">colorful</paper-button>
+                <paper-button tabindex="0" toggles class="colorful custom"><iron-icon icon="ptb-icons:check"></iron-icon>ok</paper-button>
+                <paper-button tabindex="0" toggles class="custom"><iron-icon icon="ptb-icons:clear"></iron-icon>cancel</paper-button>
+              </div>
+            </div>
+          </div>
+        
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-button"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+        <section data-element="paper-fab">
+          <div class="horizontal-section-container">
+            <div>
+              <div class="title">Enabled</div>
+              <div class="card horizontal-section center">
+                <paper-fab icon="ptb-icons:arrow-forward" title="arrow-forward" tabindex="0"></paper-fab>
+                <paper-fab icon="ptb-icons:create" title="create" tabindex="0"></paper-fab>
+                <paper-fab icon="ptb-icons:favorite" title="heart" tabindex="0"></paper-fab>
+                <paper-fab mini icon="ptb-icons:done" title="done" tabindex="0"></paper-fab>
+                <paper-fab mini icon="ptb-icons:reply" title="reply" tabindex="0"></paper-fab>
+              </div>
+            </div>
+        
+            <div>
+              <div class="title">Disabled</div>
+              <div class="card horizontal-section center">
+                <paper-fab disabled icon="ptb-icons:arrow-forward" title="arrow-forward" tabindex="0"></paper-fab>
+                <paper-fab disabled icon="ptb-icons:create" title="create" tabindex="0"></paper-fab>
+                <paper-fab disabled icon="ptb-icons:favorite" title="heart" tabindex="0"></paper-fab>
+                <paper-fab disabled mini icon="ptb-icons:done" title="done" tabindex="0"></paper-fab>
+                <paper-fab disabled mini icon="ptb-icons:reply" title="reply" tabindex="0"></paper-fab>
+              </div>
+            </div>
+          </div>
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-fab"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+        <section data-element="paper-icon-button">
+          <div class="horizontal-section-container">
+            <div>
+              <div class="title">Enabled</div>
+              <div class="horizontal-section card center">
+                <paper-icon-button icon="ptb-icons:menu" alt="menu" title="menu"></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:favorite" alt="heart" title="heart"></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:arrow-back" alt="arrow-back" title="arrow-back"></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:arrow-forward" alt="arrow-forward" title="arrow-forward"></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:clear" alt="clear" title="clear"></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:polymer" alt="polymer" title="polymer"></paper-icon-button>
+              </div>
+            </div>
+      
+            <div>
+              <div class="title">Disabled</div>
+              <div class="horizontal-section card center">
+                <paper-icon-button icon="ptb-icons:menu" alt="menu" disabled></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:favorite" alt="heart" disabled></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:arrow-back" alt="arrow-back" disabled></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:arrow-forward" alt="arrow-forward" disabled></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:clear" alt="clear" disabled></paper-icon-button>
+                <paper-icon-button icon="ptb-icons:polymer" alt="polymer" disabled></paper-icon-button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-icon-button"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+
+        <section data-element="paper-toggle-button">
+          <div class="horizontal-section-container">
+            <div>
+              <div class="title">Enabled</div>
+              <div class="card horizontal-section">
+                <div class="line"><paper-toggle-button></paper-toggle-button><span>Oxygen</span></div>
+                <div class="line"><paper-toggle-button></paper-toggle-button><span>Carbon</span></div>
+                <div class="line"><paper-toggle-button checked></paper-toggle-button><span>Hydrogen</span></div>
+                <div class="line"><paper-toggle-button checked></paper-toggle-button><span>Nitrogen</span></div>
+                <div class="line"><paper-toggle-button checked></paper-toggle-button><span>Calcium</span></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="title">Disabled</div>
+              <div class="card horizontal-section">
+                <div class="line"><paper-toggle-button disabled></paper-toggle-button><span>Oxygen</span></div>
+                <div class="line"><paper-toggle-button disabled></paper-toggle-button><span>Carbon</span></div>
+                <div class="line"><paper-toggle-button checked disabled></paper-toggle-button><span>Hydrogen</span></div>
+                <div class="line"><paper-toggle-button checked disabled></paper-toggle-button><span>Nitrogen</span></div>
+                <div class="line"><paper-toggle-button checked disabled></paper-toggle-button><span>Calcium</span></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-toggle-button"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+
+
+        <section data-element="paper-menu">
+          <div>
+            <div class="title">Standard</div>
+            <div class="card">
+              <paper-menu>
+                <paper-item>Inbox</paper-item>
+                <paper-item>Starred</paper-item>
+                <paper-item>Sent mail</paper-item>
+                <paper-item>Drafts</paper-item>
+              </paper-menu>
+            </div>
+          </div>
+      
+          <div>
+            <div class="title">Pre-selected</div>
+            <div class="card">
+              <paper-menu selected="0">
+                <paper-item>Inbox</paper-item>
+                <paper-item disabled>Starred</paper-item>
+                <paper-item>Sent mail</paper-item>
+                <paper-item>Drafts</paper-item>
+              </paper-menu>
+            </div>
+          </div>
+     
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-menu"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div> 
+        </section>
+
+
+
+        <section data-element="paper-input">
+          <div class="title">Text input</div>
+          <div class="vertical-section card">
+            <paper-input label="label"></paper-input>
+      
+            <paper-input label="password" type="password"></paper-input>
+      
+            <paper-input no-label-float label="label (no-label-float)"></paper-input>
+      
+            <paper-input label="disabled" disabled></paper-input>
+          </div>
+      
+          <div class="title">Text area</div>
+          <div class="vertical-section card">
+            <paper-textarea label="textarea label"></paper-textarea>
+          </div>
+      
+          <div class="title">Validation</div>
+          <div class="vertical-section card">
+            <paper-input label="input validates on blur (required, auto-validate)" required auto-validate error-message="needs some text!"></paper-input>
+      
+            <paper-input label="only type letters (auto-validate)" auto-validate pattern="[a-zA-Z]*" error-message="letters only!"></paper-input>
+          </div>
+      
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-input-container"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+
+        <section data-element="paper-slider">
+
+          <div class="title">Default</div>
+          <div class="vertical-section card">
+            <div>Oxygen</div>
+            <paper-slider value="21" id="test"></paper-slider><br><br>
+            <div>Argon</div>
+            <paper-slider value="1"></paper-slider><br><br>
+            <div>Hydrogen</div>
+            <paper-slider value="0"></paper-slider><br><br>
+            <div>Nitrogen</div>
+            <paper-slider value="78"></paper-slider><br><br>
+            <div>Sprinkles</div>
+            <paper-slider disabled value="33"></paper-slider>
+          </div>
+      
+          <div class="title">Editable</div>
+          <div class="vertical-section card">
+            <div class="center horizontal layout">
+              <div>R</div>
+              <paper-slider class="red" value="23" max="255" editable></paper-slider>
+            </div>
+            <div class="center horizontal layout">
+              <div>G</div>
+              <paper-slider class="green" value="183" max="255" editable></paper-slider>
+            </div>
+            <div class="center horizontal layout">
+              <div>B</div>
+              <paper-slider class="blue" value="211" max="255" editable></paper-slider>
+            </div>
+            <div class="center horizontal layout">
+            <div>&alpha;</div>
+            <paper-slider max="1.0" step="0.01" editable></paper-slider>
+            </div>
+          </div>
+      
+          <div class="title">Labelled pins</div>
+          <div class="vertical-section card">
+            <div>Brightness</div><br>
+            <paper-slider pin value="20" class="orange"></paper-slider>
+            <div>Ratings: <span id="ratingsLabel"></span></div><br>
+            <paper-slider id="ratings" pin snaps max="10" step="1" value="5" class="orange"></paper-slider>
+          </div>
+        
+      
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-slider"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+        <section data-element="paper-spinner">
+
+          <div class="horizontal-section-container">
+            <div>
+              <div class="title">Default</div>
+              <div class="horizontal-section card">
+                <paper-spinner active></paper-spinner>
+                <paper-spinner active></paper-spinner>
+                <paper-spinner active></paper-spinner>
+                <paper-spinner active></paper-spinner>
+              </div>
+            </div>
+          </div>
+      
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-spinner"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+
+        <section data-element="paper-dialog">
+          <div class="title">Dialog</div>
+
+          <div class="card vertical-section">
+            <paper-button data-dialog="actions" on-tap="_showActionsDialog">Toggle Dialog</paper-button>
+          </div>
+
+          <paper-dialog id="actions">
+            <h2>Dialog Title</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div class="buttons">
+              <paper-button >More Info...</paper-button>
+              <paper-button dialog-dismiss>Decline</paper-button>
+              <paper-button dialog-confirm autofocus>Accept</paper-button>
+            </div>
+          </paper-dialog>
+
+      
+          <div>
+             <poly-element-theme
+                 color-palettes="[[colorPalettes]]"
+                 all-properties="{{_styleProps}}"
+                 element-name="paper-dialog"
+                 data="[[data]]">
+             </poly-element-theme>
+          </div>
+        </section>
+
+
+
+      </iron-pages>
+
+      <div class="page-footer layout horizontal center justified wrap">
+        <div class="layout horizontal center">
+          <a href="http://wwww.github.com/robrez/poly-theme-builder">
+            <paper-icon-button icon="ptb-icons:github" alt="github"></paper-icon-button>
+            <span>robrez/poly-theme-builder</span>
+          </a>
+        </div>
+        <div class="layout horizontal center a" on-tap="_backToTop">
+          <span>Back to top</span>
+          <paper-icon-button icon="ptb-icons:expand-less" alt="top"></paper-icon-button>
+        </div>
+      </div>
+
+    </paper-header-panel>
+
+  </paper-drawer-panel>
+
+  <poly-theme-api id="api" data="{{data}}"></poly-theme-api>
+
+  <paper-dialog id="saveDialog" modal>
+    <div>
+      <paper-input id="filename" label="Save as..." value$="[[filename]]" on-input="_onChangeFilename"></paper-input>
+    </div>
+
+    <paper-dialog-scrollable class="layout flex">
+      <paper-textarea id="stylePreview"></paper-textarea>
+    </paper-dialog-scrollable>
+
+    <div class="buttons">
+      <paper-button dialog-dismiss>Cancel</paper-button>
+      <paper-button dialog-confirm autofocus on-tap="_saveCss">Save</paper-button>
+    </div>
+  </paper-dialog>
+
+</template>
+
+<script>
+
+(function() {
+
+  Polymer({
+
+    is: "poly-theme-builder",
+
+    properties: {
+
+      /**
+       * A key-value store for custom properties
+       */
+      _styleProps: {
+        type: Object,
+        notify: true,
+        value: function() { return null; }
+      },
+
+      /**
+       * A list of elements that have at least partial support
+       */
+      _elements: {
+        type: Array,
+        notify: true,
+        value: function() {
+          return [
+            { element: "application", desc: "Application" },
+            { element: "paper-checkbox", desc: "Checkbox" },
+            { element: "paper-radio-button", desc: "Radio Button" },
+            { element: "paper-tabs", desc: "Tabs" },
+            { element: "paper-input", desc: "Input" },
+            { element: "paper-toolbar", desc: "Toolbar" },
+            { element: "paper-menu", desc: "Menu" },
+            { element: "paper-button", desc: "Button" },
+            { element: "paper-icon-button", desc: "Icon Button" },
+            { element: "paper-toggle-button", desc: "Toggle Button" },
+            { element: "paper-progress", desc: "Progress" },
+            { element: "paper-fab", desc: "Fab" },
+            { element: "paper-dialog", desc: "Dialog" },
+            { element: "paper-slider", desc: "Slider" },
+            { element: "paper-spinner", desc: "Spinner" }
+          ].sort(function(a, b) {
+            if(a.desc < b.desc) {
+              return -1;
+            } else if(a.desc > b.desc) {
+              return 1;
+            } else {
+              return 0;
+            }
+          });
+        },
+        observer: '_onElementsChanged'
+      },
+
+      /**
+       * Mapping of element-name => description
+       */
+      _elementNames: {
+        type: Object
+      },
+
+      /**
+       * Currently selected element
+       */
+      element: {
+        type: String,
+        observer: '_onElementChanged'
+      },
+
+      /**
+       * Description of currently selected element
+       */
+      _elementDesc: {
+        type: String,
+        computed: '_computeElementDesc(_elementNames, element)'
+      },
+
+      /**
+       * Collection of color palette data
+       */
+      colorPalettes: {
+        type: Object,
+        notify: true
+      },
+
+      /**
+       * Filename for saving the custom style
+       */
+      filename: {
+        type: String,
+        value: "app-theme.html"
+      },
+
+      /**
+       * A queue to debounce style updates
+       */
+      _pendingStyleUpdates: {
+        type: Array,
+        value: function() { return null; }
+      }
+
+    },
+
+    _onElementsChanged: function(elements) {
+      if(elements && elements.length) {
+        this.element = elements[0].element;
+        var names = elements.reduce(function(names, item) {
+          names[item.element] = item.desc;
+          return names;
+        }, {});
+        this.set("_elementNames", names);
+      }
+    },
+
+    _onElementChanged: function(value) {
+      this._backToTop();
+    },
+
+    _backToTop: function() {
+      this.$.mainPanel.scroller.scrollTop = 0;
+    },
+
+    _computeElementDesc: function(names, element) {
+      if(element && names) {
+        return names[element] || "";
+      } else {
+        return "";
+      }
+    },
+
+    ready: function() {
+      var styleProps = this._findStyleHost()._properties;
+      this.set("_styleProps", styleProps);
+      var styleKeys = Object.keys(styleProps);
+
+      var colorRegex = /^--((paper|google)-.*)-(.*0)$/;
+      var palettes = styleKeys.reduce(
+        function(map, item) {
+          var result = colorRegex.exec(item);
+          if(result) {
+            var palette = result[1];
+            var entries = map[palette];
+            if(!entries) {
+              entries = [];
+              map[palette] = entries;
+            }
+            entries.push({
+              palette: palette,
+              name: item,
+              value: styleProps[item],
+              tone: result[3]
+            });
+          }
+          return map;
+        },
+        {}
+      );
+
+      this.set("colorPalettes", palettes);
+    },
+
+    _updateProp: function(e, detail) {
+      var pending = this._pendingStyleUpdates;
+      if(!pending) {
+        pending = [];
+        this.set("_pendingStyleUpdates", pending);
+      }
+      pending.push(detail);
+      this.debounce("applypending", this._applyPendingStyleUpdates, 250);
+    },
+
+    _applyPendingStyleUpdates: function() {
+      var pending = this._pendingStyleUpdates;
+      if(pending && pending.length) {
+        
+        //would like to delete the property value if the property is not active
+        //  this should default back to the default value
+        //  instead, I'm having to rig up this global thing to push changes
+        //  to individual elements that use the default values
+        var globals = [];
+
+        pending.forEach(function(detail) {
+          this.customStyle[detail.property] = detail.value;
+          if(detail.global) {
+            globals.push(detail);
+          } else {
+            this._styleProps[detail.property] = detail.value;
+          }
+        }.bind(this));
+
+        this.updateStyles();
+
+        this.set("_pendingStyleUpdates", null);
+
+        globals.forEach(function(detail) {
+          //trigger a notify for "global" properties
+          this.set("_styleProps." + detail.property, detail.value);
+        }.bind(this));
+      }
+    },
+
+    _showActionsDialog: function() {
+      this.$.actions.open();
+    },
+
+    _onTapDownload: function() {
+      var nodes = Polymer.dom(this.root).querySelectorAll("poly-element-theme");
+      var lines = this.$.api.generateStyle(nodes);
+      if(lines && lines.length) {
+        var style = lines.join("\n");
+        this.$.stylePreview.value = style;
+        this.$.saveDialog.open();
+      }
+    },
+
+    _onChangeFilename: function(e, detail) {
+      var val = e.target.value.replace(/[^a-zA-Z0-9_\.\-]/g, "");
+      //TODO use filesystem save dialog...
+      this.filename = val;
+      e.target.value = val;
+    },
+
+    _saveCss: function() {
+      this._saveFile(this.filename, this.$.stylePreview.value);
+    },
+
+    _saveFile: function(filename, data) {
+      if(!filename || filename.trim().length === 0) {
+        filename = "app-theme.html";
+      }
+      var blob = new Blob([data], {type: "text/html"});
+      var url = window.URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      document.body.appendChild(a);
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.parentNode.removeChild(a);
+    }
+
+  });
+
+})();
+</script>
+</dom-module>

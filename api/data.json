@@ -1,0 +1,762 @@
+[
+  {
+    "element": "application",
+    "properties": [
+
+      {
+        "name": "--dark-primary-color",
+        "description": "Dark primary color (700)",
+        "type": "Color",
+        "default": "--paper-indigo-700"
+      },
+      {
+        "name": "--default-primary-color",
+        "description": "Default primary color (500)",
+        "type": "Color",
+        "default": "--paper-indigo-500"
+      },
+      {
+        "name": "--light-primary-color",
+        "description": "Light primary color (100)",
+        "type": "Color",
+        "default": "--paper-indigo-100"
+      },
+      {
+        "name": "--text-primary-color",
+        "description": "Color of icons and text in app toolbar",
+        "type": "Color",
+        "default": "#ffffff"
+      },
+      {
+        "name": "--accent-color",
+        "description": "Accent color",
+        "type": "Color",
+        "default": "--paper-pink-a200"
+      },
+      {
+        "name": "--primary-background-color",
+        "description": "Primary background color",
+        "type": "Color",
+        "default": "#ffffff"
+      },
+      {
+        "name": "--primary-text-color",
+        "description": "Primary text color",
+        "type": "Color",
+        "default": "#212121"
+      },
+      {
+        "name": "--secondary-text-color",
+        "description": "Secondary text color",
+        "type": "Color",
+        "default": "#727272"
+      },
+      {
+        "name": "--disabled-text-color",
+        "description": "Disabled text color",
+        "type": "Color",
+        "default": "#bdbdbd"
+      },
+      {
+        "name": "--divider-color",
+        "description": "Divider color",
+        "type": "Color",
+        "default": "#B6B6B6"
+      }
+    ]
+  },
+  {
+    "element": "paper-button",
+    "properties": [
+
+      {
+        "name": "--paper-button-ink-color",
+        "description": "Background color of the ripple",
+        "type": "Color",
+        "default": "color"
+      },
+      {
+        "name": "--paper-button",
+        "description": "Mixin applied to the button",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-button-disabled",
+        "description": "Mixin applied to the disabled button. Note that you can also use the paper-button[disabled] selector",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-button-flat-keyboard-focus",
+        "description": "Mixin applied to a flat button after it's been focused using the keyboard",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-button-raised-keyboard-focus",
+        "description": "Mixin applied to a raised button after it's been focused using the keyboard",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      }
+    ]
+  },
+  {
+    "element": "paper-checkbox",
+    "properties": [
+
+      {
+        "name": "--paper-checkbox-unchecked-background-color",
+        "description": "Checkbox background color when the input is not checked",
+        "type": "Color",
+        "default": "transparent"
+      },
+      {
+        "name": "--paper-checkbox-unchecked-color",
+        "description": "Checkbox border color when the input is not checked",
+        "type": "Color",
+        "default": "--primary-text-color"
+      },
+      {
+        "name": "--paper-checkbox-unchecked-ink-color",
+        "description": "Selected/focus ripple color when the input is not checked",
+        "type": "Color",
+        "default": "--primary-text-color"
+      },
+      {
+        "name": "--paper-checkbox-checked-color",
+        "description": "Checkbox color when the input is checked",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-checkbox-checked-ink-color",
+        "description": "Selected/focus ripple color when the input is checked",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-checkbox-checkmark-color",
+        "description": "Checkmark color",
+        "type": "Color",
+        "default": "white"
+      },
+      {
+        "name": "--paper-checkbox-label-color",
+        "description": "Label color",
+        "type": "Color",
+        "default": "--primary-text-color"
+      },
+      {
+        "name": "--paper-checkbox-error-color",
+        "description": "Checkbox color when invalid",
+        "type": "Color",
+        "default": "--google-red-500"
+      }
+    ]
+  },
+  {
+    "element": "paper-dialog",
+    "properties": [
+
+      {
+        "name": "--paper-dialog-background-color",
+        "description": "Dialog background color",
+        "type": "Color",
+        "default": "--primary-background-color"
+      },
+      {
+        "name": "--paper-dialog-color",
+        "description": "Dialog foreground color",
+        "type": "Color",
+        "default": "--primary-text-color"
+      },
+      {
+        "name": "--paper-dialog",
+        "description": "Mixin applied to the dialog",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-dialog-title",
+        "description": "Mixin applied to the title (<h2>) element",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-dialog-button-color",
+        "description": "Button area foreground color",
+        "type": "Color",
+        "default": "--default-primary-color"
+      }
+    ]
+  },
+  {
+    "element": "paper-fab",
+    "properties": [
+
+      {
+        "name": "--paper-fab-background",
+        "description": "The background color of the button",
+        "type": "Color",
+        "default": "--accent-color"
+      },
+      {
+        "name": "--paper-fab-keyboard-focus-background",
+        "description": "The background color of the button when focused",
+        "type": "Color",
+        "default": "--paper-pink-900"
+      },
+      {
+        "name": "--paper-fab-disabled-background",
+        "description": "The background color of the button when it's disabled",
+        "type": "Color",
+        "default": "--paper-grey-300"
+      },
+      {
+        "name": "--paper-fab-disabled-text",
+        "description": "The text color of the button when it's disabled",
+        "type": "Color",
+        "default": "--paper-grey-500"
+      },
+      {
+        "name": "--paper-fab",
+        "description": "Mixin applied to the button",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-fab-mini",
+        "description": "Mixin applied to a mini button",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-fab-disabled",
+        "description": "Mixin applied to a disabled button",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      }
+    ]
+  },
+  {
+    "element": "paper-icon-button",
+    "properties": [
+
+      {
+        "name": "--paper-icon-button-disabled-text",
+        "description": "The color of the disabled button",
+        "type": "Color",
+        "default": "--primary-text-color"
+      },
+      {
+        "name": "--paper-icon-button-ink-color",
+        "description": "Selected/focus ripple color",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-icon-button",
+        "description": "Mixin for a button",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-icon-button-disabled",
+        "description": "Mixin for a disabled button",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      }
+    ]
+  },
+  {
+    "element": "paper-input-container",
+    "properties": [
+
+      {
+        "name": "--paper-input-container-color",
+        "description": "Label and underline color when the input is not focused",
+        "type": "Color",
+        "default": "--secondary-text-color"
+      },
+      {
+        "name": "--paper-input-container-focus-color",
+        "description": "Label and underline color when the input is focused",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-input-container-invalid-color",
+        "description": "Label and underline color when the input is is invalid",
+        "type": "Color",
+        "default": "--google-red-500"
+      },
+      {
+        "name": "--paper-input-container-input-color",
+        "description": "Input foreground color",
+        "type": "Color",
+        "default": "--primary-text-color"
+      },
+      {
+        "name": "--paper-input-container",
+        "description": "Mixin applied to the container",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-input-container-label",
+        "description": "Mixin applied to the label",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-input-container-label-focus",
+        "description": "Mixin applied to the label when the input is focused",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-input-container-input",
+        "description": "Mixin applied to the input",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-input-container-input-disabled",
+        "description": "Mixin applied to the input when it's disabled",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-input-container-prefix",
+        "description": "Mixin applied to the input prefix",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-input-container-suffix",
+        "description": "Mixin applied to the input suffix",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-input-container-underline",
+        "description": "Mixin applied to the underline",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-input-container-underline-focus",
+        "description": "Mixin applied to the underline when the input is focued",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-input-container-underline-disabled",
+        "description": "Mixin applied to the underline when the input is disabled",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      }
+    ]
+  },
+  {
+    "element": "paper-menu",
+    "properties": [
+
+      {
+        "name": "--paper-menu-background-color",
+        "description": "Menu background color",
+        "type": "Color",
+        "default": "--primary-background-color"
+      },
+      {
+        "name": "--paper-menu-color",
+        "description": "Menu foreground color",
+        "type": "Color",
+        "default": "--primary-text-color"
+      },
+      {
+        "name": "--paper-menu-disabled-color",
+        "description": "Foreground color for a disabled item",
+        "type": "Color",
+        "default": "--disabled-text-color"
+      },
+      {
+        "name": "--paper-menu",
+        "description": "Mixin applied to the menu",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-menu-selected-item",
+        "description": "Mixin applied to the selected item",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-menu-focused-item",
+        "description": "Mixin applied to the focused item",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-menu-focused-item-after",
+        "description": "Mixin applied to the ::after pseudo-element for the focused item",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      }
+    ]
+  },
+  {
+    "element": "paper-progress",
+    "properties": [
+
+      {
+        "name": "--paper-progress-container-color",
+        "description": "Mixin applied to container",
+        "type": "Color",
+        "default": "--google-grey-300"
+      },
+      {
+        "name": "--paper-progress-active-color",
+        "description": "The color of the active bar",
+        "type": "Color",
+        "default": "--google-green-500"
+      },
+      {
+        "name": "--paper-progress-secondary-color",
+        "description": "The color of the secondary bar",
+        "type": "Color",
+        "default": "--google-green-100"
+      },
+      {
+        "name": "--paper-progress-disabled-active-color",
+        "description": "The color of the active bar if disabled",
+        "type": "Color",
+        "default": "--google-grey-500"
+      },
+      {
+        "name": "--paper-progress-disabled-secondary-color",
+        "description": "The color of the secondary bar if disabled",
+        "type": "Color",
+        "default": "--google-grey-300"
+      }
+    ]
+  },
+  {
+    "element": "paper-radio-button",
+    "properties": [
+
+      {
+        "name": "--paper-radio-button-unchecked-background-color",
+        "description": "Radio button background color when the input is not checked",
+        "type": "Color",
+        "default": "transparent"
+      },
+      {
+        "name": "--paper-radio-button-unchecked-color",
+        "description": "Radio button color when the input is not checked",
+        "type": "Color",
+        "default": "--primary-text-color"
+      },
+      {
+        "name": "--paper-radio-button-unchecked-ink-color",
+        "description": "Selected/focus ripple color when the input is not checked",
+        "type": "Color",
+        "default": "--primary-text-color"
+      },
+      {
+        "name": "--paper-radio-button-checked-color",
+        "description": "Radio button color when the input is checked",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-radio-button-checked-ink-color",
+        "description": "Selected/focus ripple color when the input is checked",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-radio-button-label-color",
+        "description": "Label color",
+        "type": "Color",
+        "default": "--primary-text-color"
+      }
+    ]
+  },
+  {
+    "element": "paper-slider",
+    "properties": [
+
+      {
+        "name": "--paper-slider-bar-color",
+        "description": "The background color of the slider",
+        "type": "Color",
+        "default": "transparent"
+      },
+      {
+        "name": "--paper-slider-active-color",
+        "description": "The progress bar color",
+        "type": "Color",
+        "default": "--google-blue-700"
+      },
+      {
+        "name": "--paper-slider-secondary-color",
+        "description": "The secondary progress bar color",
+        "type": "Color",
+        "default": "--google-blue-300"
+      },
+      {
+        "name": "--paper-slider-knob-color",
+        "description": "The knob color",
+        "type": "Color",
+        "default": "--google-blue-700"
+      },
+      {
+        "name": "--paper-slider-disabled-knob-color",
+        "description": "The disabled knob color",
+        "type": "Color",
+        "default": "--google-grey-500"
+      },
+      {
+        "name": "--paper-slider-pin-color",
+        "description": "The pin color",
+        "type": "Color",
+        "default": "--google-blue-700"
+      },
+      {
+        "name": "--paper-slider-font-color",
+        "description": "The pin's text color",
+        "type": "Color",
+        "default": "#fff"
+      },
+      {
+        "name": "--paper-slider-disabled-active-color",
+        "description": "The disabled progress bar color",
+        "type": "Color",
+        "default": "--google-grey-500"
+      },
+      {
+        "name": "--paper-slider-disabled-secondary-color",
+        "description": "The disabled secondary progress bar color",
+        "type": "Color",
+        "default": "--google-grey-300"
+      },
+      {
+        "name": "--paper-slider-knob-start-color",
+        "description": "The fill color of the knob at the far left",
+        "type": "Color",
+        "default": "transparent"
+      },
+      {
+        "name": "--paper-slider-knob-start-border-color",
+        "description": "The border color of the knob at the far left",
+        "type": "Color",
+        "default": "#c8c8c8"
+      },
+      {
+        "name": "--paper-slider-pin-start-color",
+        "description": "The color of the pin at the far left",
+        "type": "Color",
+        "default": "#c8c8c8"
+      }
+    ]
+  },
+  {
+    "element": "paper-spinner",
+    "properties": [
+
+      {
+        "name": "--paper-spinner-layer-1-color",
+        "description": "Color of the first spinner rotation",
+        "type": "Color",
+        "default": "--google-blue-500"
+      },
+      {
+        "name": "--paper-spinner-layer-2-color",
+        "description": "Color of the second spinner rotation",
+        "type": "Color",
+        "default": "--google-red-500"
+      },
+      {
+        "name": "--paper-spinner-layer-3-color",
+        "description": "Color of the third spinner rotation",
+        "type": "Color",
+        "default": "--google-yellow-500"
+      },
+      {
+        "name": "--paper-spinner-layer-4-color",
+        "description": "Color of the fourth spinner rotation",
+        "type": "Color",
+        "default": "--google-green-500"
+      }
+    ]
+  },
+  {
+    "element": "paper-tab",
+    "properties": [
+
+      {
+        "name": "--paper-tab-ink",
+        "description": "Ink color",
+        "type": "Color",
+        "default": "--paper-yellow-a100"
+      },
+      {
+        "name": "--paper-tab",
+        "description": "Mixin applied to the tab",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-tab-content",
+        "description": "Mixin applied to the tab content",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      }
+    ]
+  },
+  {
+    "element": "paper-tabs",
+    "properties": [
+
+      {
+        "name": "--paper-tabs-selection-bar-color",
+        "description": "Color for the selection bar",
+        "type": "Color",
+        "default": "--paper-yellow-a100"
+      },
+      {
+        "name": "--paper-tabs",
+        "description": "Mixin applied to the tab",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      }
+    ]
+  },
+  {
+    "element": "paper-toggle-button",
+    "properties": [
+
+      {
+        "name": "--paper-toggle-button-unchecked-bar-color",
+        "description": "Slider color when the input is not checked",
+        "type": "Color",
+        "default": "#000000"
+      },
+      {
+        "name": "--paper-toggle-button-unchecked-button-color",
+        "description": "Button color when the input is not checked",
+        "type": "Color",
+        "default": "--paper-grey-50"
+      },
+      {
+        "name": "--paper-toggle-button-unchecked-ink-color",
+        "description": "Selected/focus ripple color when the input is not checked",
+        "type": "Color",
+        "default": "--dark-primary-color"
+      },
+      {
+        "name": "--paper-toggle-button-checked-bar-color",
+        "description": "Slider button color when the input is checked",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-toggle-button-checked-button-color",
+        "description": "Button color when the input is checked",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-toggle-button-checked-ink-color",
+        "description": "Selected/focus ripple color when the input is checked",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-toggle-button-unchecked-bar",
+        "description": "Mixin applied to the slider when the input is not checked",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-toggle-button-unchecked-button",
+        "description": "Mixin applied to the slider button when the input is not checked",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-toggle-button-checked-bar",
+        "description": "Mixin applied to the slider when the input is checked",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      },
+      {
+        "name": "--paper-toggle-button-checked-button",
+        "description": "Mixin applied to the slider button when the input is checked",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      }
+    ]
+  },
+  {
+    "element": "paper-toolbar",
+    "properties": [
+
+      {
+        "name": "--paper-toolbar-background",
+        "description": "Toolbar background color",
+        "type": "Color",
+        "default": "--default-primary-color"
+      },
+      {
+        "name": "--paper-toolbar-color",
+        "description": "Toolbar foreground color",
+        "type": "Color",
+        "default": "--text-primary-color"
+      },
+      {
+        "name": "--paper-toolbar",
+        "description": "Mixin applied to the toolbar",
+        "mixin": true,
+        "type": "Object",
+        "default": {}
+      }
+    ]
+  },
+  { "element": "dummy" }
+]

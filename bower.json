@@ -1,6 +1,6 @@
 {
   "name": "poly-theme-builder",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "authors": [
     "Rob Resendez <resendez.java@gmail.com>"
   ],
@@ -15,7 +15,6 @@
   ],
   "keywords": [
     "web-components",
-    "web-component",
     "poly-theme-builder"
   ],
   "main": [
@@ -23,7 +22,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/robrez/poly-theme-builder"
+    "url": "git://github.com/robrez/poly-theme-builder.git"
   },
   "dependencies": {
     "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",

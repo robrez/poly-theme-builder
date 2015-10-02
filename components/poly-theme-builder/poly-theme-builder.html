@@ -95,13 +95,12 @@ Example:
     }
 
     .horizontal-section-container {
-      @apply(--layout-horizontal);
-      @apply(--layout-wrap);
+      @apply(--layout-vertical);
     }
 
     .horizontal-section {
       @apply(--layout-vertical);
-      width: 200px;
+      width: 100%;
       padding: 24px;
     }
 
@@ -126,8 +125,12 @@ Example:
     }
 
     #saveDialog {
-      position: fixed;
+      /*position: fixed;*/
       width: 90vw;
+    }
+
+    #colorPickerTitle {
+      margin: 0;
     }
 
     .page-footer {
@@ -167,6 +170,15 @@ Example:
         margin: 24px;
       }
  
+      .horizontal-section-container {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      .horizontal-section {
+        width: 200px;
+      }
+
     }
 
     @media (min-width: 1280px) {
@@ -209,6 +221,7 @@ Example:
         mode="standard"
         id="mainPanel"
         main
+        on-pick-color="_showColorPicker"
         on-update-property="_updateProp">
 
       <paper-toolbar class="paper-header">
@@ -773,8 +786,9 @@ Example:
       <paper-input id="filename" label="Save as..." value$="[[filename]]" on-input="_onChangeFilename"></paper-input>
     </div>
 
-    <paper-dialog-scrollable class="layout flex">
-      <paper-textarea id="stylePreview"></paper-textarea>
+    <paper-dialog-scrollable>
+      <!--<iron-autogrow-textarea id="stylePreview" class="layout vertical flex"></iron-autogrow-textarea>-->
+      <pre id="stylePreview"></pre>
     </paper-dialog-scrollable>
 
     <div class="buttons">
@@ -782,6 +796,25 @@ Example:
       <paper-button dialog-confirm autofocus on-tap="_saveCss">Save</paper-button>
     </div>
   </paper-dialog>
+
+
+  <paper-dialog id="colorPickerDialog" modal>
+    <div>
+     <div class="title" id="colorPickerTitle"></div>
+     <div class="caption" id="colorPickerCaption"></div>
+    </div>
+
+    <paper-dialog-scrollable>
+      <poly-color-picker id="colorPicker" all-properties="[[_styleProps]]" color-palettes="[[colorPalettes]]">
+      </poly-color-picker>
+    </paper-dialog-scrollable>
+
+    <div class="buttons">
+      <paper-button dialog-dismiss>Cancel</paper-button>
+      <paper-button dialog-confirm autofocus on-tap="_onColorChanged">OK</paper-button>
+    </div>
+  </paper-dialog>
+
 
 </template>
 
@@ -996,7 +1029,7 @@ Example:
       var lines = this.$.api.generateStyle(nodes);
       if(lines && lines.length) {
         var style = lines.join("\n");
-        this.$.stylePreview.value = style;
+        this.$.stylePreview.textContent = style;
         this.$.saveDialog.open();
       }
     },
@@ -1009,22 +1042,45 @@ Example:
     },
 
     _saveCss: function() {
-      this._saveFile(this.filename, this.$.stylePreview.value);
+      var nodes = Polymer.dom(this.root).querySelectorAll("poly-element-theme");
+      var lines = this.$.api.generateStyle(nodes);
+      if(lines && lines.length) {
+        this._saveFile(this.filename, lines.join("\n"));
+      }
     },
 
     _saveFile: function(filename, data) {
       if(!filename || filename.trim().length === 0) {
         filename = "app-theme.html";
       }
-      var blob = new Blob([data], {type: "text/html"});
+      var blob = new Blob([data], {type: "text;charset=utf8;"});
       var url = window.URL.createObjectURL(blob);
       var a = document.createElement("a");
       document.body.appendChild(a);
-      a.href = url;
-      a.download = filename;
+      a.setAttribute("href", url);
+      a.setAttribute("download", filename);
       a.click();
-      window.URL.revokeObjectURL(url);
-      a.parentNode.removeChild(a);
+      setTimeout(function(){
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);  
+      }, 250);  
+    },
+
+    _showColorPicker: function(e, detail) {
+      this.$.colorPicker.value = detail.value;
+      this.$.colorPickerTitle.innerHTML = detail.property.name;
+      this.$.colorPickerCaption.innerHTML = detail.property.description;
+      this.$.colorPickerDialog.open();
+      this._colorCallback = detail.callback;
+    },
+
+    _onColorChanged: function() {
+      var color = this.$.colorPicker.value;
+      var cb = this._colorCallback;
+      if(cb) {
+        cb(color);
+        this._colorCallback = null;
+      }
     }
 
   });

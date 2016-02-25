@@ -1,4 +1,5 @@
 <link rel="import" href="elements.html">
+<link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
 <!--
 `poly-theme-builder` is an application that will build polymer themes
 
@@ -191,6 +192,9 @@ Example:
     }
 
   </style>
+
+  <hydrolysis-analyzer id="hydrolysis" analyzer="{{_analyzer}}">
+  </hydrolysis-analyzer>
 
   <paper-drawer-panel id="drawerPanel" responsive-width="960px">
 
@@ -827,6 +831,10 @@ Example:
     is: "poly-theme-builder",
 
     properties: {
+      _analyzer: {
+        type: Object,
+        observer: '_analyzerChanged'
+      },
 
       /**
        * A key-value store for custom properties
@@ -951,6 +959,10 @@ Example:
     },
 
     ready: function() {
+
+      this.$.hydrolysis.src = "../../paper-tabs/paper-tabs.html";
+      this.$.hydrolysis.analyze();
+
       var styleProps = this._findStyleHost()._properties;
       this.set("_styleProps", styleProps);
       var styleKeys = Object.keys(styleProps);
@@ -1080,6 +1092,86 @@ Example:
       if(cb) {
         cb(color);
         this._colorCallback = null;
+      }
+    },
+
+    _analyzerChanged: function(analyzer) {
+      var element = analyzer.elements.map(function(item) {
+        var lines = item.desc.split('\n');
+        var customProps = lines.reduce(function(all, line) {
+          var prop = this._parseCustomProp(line);
+          if(prop) {
+            all.push(prop);
+          }
+          return all;
+        }.bind(this), []);
+
+        var props = item.properties.filter(function(item) {
+          return item.name.substring(0,1) !== '_';
+        }).map(function(item) {
+          return {
+            name: item.name,
+            desc: (item.desc || "").trim(),
+            type: item.type,
+            default: item.default
+          };
+        });
+        return {
+          customProps: customProps,
+          is: item.is,
+          href: item.contentHref,
+          props: props
+        };
+      }.bind(this));
+
+      console.log(element);
+
+    },
+
+    _parseCustomProp: function(text) {
+      text = text.trim();
+      var re = /^[\`]*--[a-z\-0-9]+[\s\t ]*|.*|.*$/
+      if (!re.test(text)) {
+        return null;
+      }
+      if (text.length > 4 && text.substring(0, 4) === "----") {
+        return null;
+      }
+      var parts = text.replace(/`/g, "").split("|");
+      if(parts && parts.length === 3) {
+        var name = parts[0].trim();
+        var desc = parts[1].trim();
+        var value = parts[2].trim();
+        if (name.indexOf(' ') > 0) {
+          return null;
+        }
+        var prop = {
+          name: name,
+          desc: desc,
+          default: value
+        };
+
+        if(value.substring(0,1) === "{" && value.substring(value.length - 1) === '}') {
+          prop.default = JSON.parse(value);
+          prop.mixin = true;
+          prop.type = "Mixin";
+        } else if (name.indexOf('color') > 0) {
+          prop.color = true;
+          prop.type = "Color";
+        } else if (name.indexOf('height') > 0) {
+          prop.size = true;
+          prop.type = "Size";
+        } else if (name.indexOf('width') > 0) {
+          prop.size = true;
+          prop.type = "Size";
+        } else {
+          prop.other = true;
+          prop.type = "Unknown";
+        }
+
+        return prop;
+      } else {
+        return null;
       }
     }
 

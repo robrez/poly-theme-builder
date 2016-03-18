@@ -1,5 +1,4 @@
 <link rel="import" href="elements.html">
-<link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
 <!--
 `poly-theme-builder` is an application that will build polymer themes
 
@@ -76,7 +75,7 @@ Example:
       margin: 12px 4px;
     }
 
-    iron-pages {
+    .content {
       min-height: 90vh;
     }
 
@@ -193,9 +192,6 @@ Example:
 
   </style>
 
-  <hydrolysis-analyzer id="hydrolysis" analyzer="{{_analyzer}}">
-  </hydrolysis-analyzer>
-
   <paper-drawer-panel id="drawerPanel" responsive-width="960px">
 
     <paper-header-panel drawer>
@@ -212,7 +208,7 @@ Example:
       </paper-toolbar>
 
       <div class="layout vertical fit" class="content drawer">
-        <paper-menu attr-for-selected="data-element" selected="{{element}}">
+        <paper-menu attr-for-selected="data-element" selected="{{_element}}">
           <template is="dom-repeat" items="[[_elements]]">
             <paper-item data-element$="[[item.element]]">[[item.desc]]</paper-item>
           </template>
@@ -232,12 +228,13 @@ Example:
         <paper-icon-button icon="ptb-icons:menu" paper-drawer-toggle></paper-icon-button>
         <div class="flex">
           <div class="toolbar-title">Polymer Theme Builder</div>
-          <div class="toolbar-caption">[[_elementDesc]]</div>
+          <div class="toolbar-caption">[[_elementData.desc]]</div>
         </div>
         <paper-icon-button icon="ptb-icons:file-download" on-tap="_onTapDownload"></paper-icon-button>
       </paper-toolbar>
 
-      <iron-pages class="content" attr-for-selected="data-element" selected="{{element}}">
+      <div class="content">
+      <iron-pages attr-for-selected="data-element" selected="{{_element}}">
 
         <section data-element="application">
           <div>
@@ -250,15 +247,6 @@ Example:
             </div>
           </div>
 
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="application"
-                 data="[[data]]">
-             </poly-element-theme>
-          </div>
         </section>
 
         <section data-element="paper-checkbox">
@@ -283,15 +271,6 @@ Example:
                 <paper-checkbox checked disabled>Calcium</paper-checkbox>
               </div>
             </div>
-          </div>
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-checkbox"
-                 data="[[data]]">
-             </poly-element-theme>
           </div>
         </section>
 
@@ -319,16 +298,6 @@ Example:
               </div>
             </div>
           </div>
-
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-radio-button"
-                 data="[[data]]">
-             </poly-element-theme>
-          </div>
         </section>
 
 
@@ -343,25 +312,6 @@ Example:
               <paper-tab>ITEM THREE</paper-tab>
   
             </paper-tabs>
-          </div>
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-tabs"
-                 data="[[data]]">
-             </poly-element-theme>
-          </div>
-
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-tab"
-                 data="[[data]]">
-             </poly-element-theme>
           </div>
         </section>
 
@@ -384,15 +334,6 @@ Example:
             <paper-progress indeterminate value="800" min="100" max="1000"></paper-progress>
             <paper-progress disabled indeterminate></paper-progress>
           </div>
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-progress"
-                 data="[[data]]">
-             </poly-element-theme>
-          </div>
         </section>
 
 
@@ -406,15 +347,6 @@ Example:
               <paper-icon-button icon="ptb-icons:refresh"></paper-icon-button>
               <paper-icon-button icon="ptb-icons:add">+</paper-icon-button>
             </paper-toolbar>
-          </div>
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-toolbar"
-                 data="[[data]]">
-             </poly-element-theme>
           </div>
         </section>
 
@@ -460,15 +392,6 @@ Example:
               </div>
             </div>
           </div>
-        
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-button"
-                 data="[[data]]">
-             </poly-element-theme>
-          </div>
         </section>
 
         <section data-element="paper-fab">
@@ -494,15 +417,6 @@ Example:
                 <paper-fab disabled mini icon="ptb-icons:reply" title="reply" tabindex="0"></paper-fab>
               </div>
             </div>
-          </div>
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-fab"
-                 data="[[data]]">
-             </poly-element-theme>
           </div>
         </section>
 
@@ -532,15 +446,6 @@ Example:
               </div>
             </div>
           </div>
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-icon-button"
-                 data="[[data]]">
-             </poly-element-theme>
-          </div>
         </section>
 
 
@@ -568,15 +473,6 @@ Example:
               </div>
             </div>
 
-          </div>
-
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-toggle-button"
-                 data="[[data]]">
-             </poly-element-theme>
           </div>
         </section>
 
@@ -606,15 +502,6 @@ Example:
               </paper-menu>
             </div>
           </div>
-     
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-menu"
-                 data="[[data]]">
-             </poly-element-theme>
-          </div> 
         </section>
 
 
@@ -641,15 +528,6 @@ Example:
             <paper-input label="input validates on blur (required, auto-validate)" required auto-validate error-message="needs some text!"></paper-input>
       
             <paper-input label="only type letters (auto-validate)" auto-validate pattern="[a-zA-Z]*" error-message="letters only!"></paper-input>
-          </div>
-      
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-input-container"
-                 data="[[data]]">
-             </poly-element-theme>
           </div>
         </section>
 
@@ -698,15 +576,6 @@ Example:
             <paper-slider id="ratings" pin snaps max="10" step="1" value="5" class="orange"></paper-slider>
           </div>
         
-      
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-slider"
-                 data="[[data]]">
-             </poly-element-theme>
-          </div>
         </section>
 
         <section data-element="paper-spinner">
@@ -721,15 +590,6 @@ Example:
                 <paper-spinner active></paper-spinner>
               </div>
             </div>
-          </div>
-      
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-spinner"
-                 data="[[data]]">
-             </poly-element-theme>
           </div>
         </section>
 
@@ -750,21 +610,19 @@ Example:
               <paper-button dialog-confirm autofocus>Accept</paper-button>
             </div>
           </paper-dialog>
-
-      
-          <div>
-             <poly-element-theme
-                 color-palettes="[[colorPalettes]]"
-                 all-properties="{{_styleProps}}"
-                 element-name="paper-dialog"
-                 data="[[data]]">
-             </poly-element-theme>
-          </div>
         </section>
 
-
-
       </iron-pages>
+
+      <div>
+        <poly-element-theme
+            color-palettes="[[colorPalettes]]"
+            all-properties="{{_styleProps}}"
+            element-data="[[_elementData]]">
+        </poly-element-theme>
+      </div>
+
+      </div>
 
       <div class="page-footer layout horizontal center justified wrap">
         <div class="layout horizontal center">
@@ -783,7 +641,7 @@ Example:
 
   </paper-drawer-panel>
 
-  <poly-theme-api id="api" data="{{data}}"></poly-theme-api>
+  <poly-theme-api id="api" data="{{_elements}}"></poly-theme-api>
 
   <paper-dialog id="saveDialog" modal>
     <div>
@@ -831,11 +689,6 @@ Example:
     is: "poly-theme-builder",
 
     properties: {
-      _analyzer: {
-        type: Object,
-        observer: '_analyzerChanged'
-      },
-
       /**
        * A key-value store for custom properties
        */
@@ -852,56 +705,25 @@ Example:
         type: Array,
         notify: true,
         value: function() {
-          return [
-            { element: "application", desc: "Application" },
-            { element: "paper-checkbox", desc: "Checkbox" },
-            { element: "paper-radio-button", desc: "Radio Button" },
-            { element: "paper-tabs", desc: "Tabs" },
-            { element: "paper-input", desc: "Input" },
-            { element: "paper-toolbar", desc: "Toolbar" },
-            { element: "paper-menu", desc: "Menu" },
-            { element: "paper-button", desc: "Button" },
-            { element: "paper-icon-button", desc: "Icon Button" },
-            { element: "paper-toggle-button", desc: "Toggle Button" },
-            { element: "paper-progress", desc: "Progress" },
-            { element: "paper-fab", desc: "Fab" },
-            { element: "paper-dialog", desc: "Dialog" },
-            { element: "paper-slider", desc: "Slider" },
-            { element: "paper-spinner", desc: "Spinner" }
-          ].sort(function(a, b) {
-            if(a.desc < b.desc) {
-              return -1;
-            } else if(a.desc > b.desc) {
-              return 1;
-            } else {
-              return 0;
-            }
-          });
-        },
-        observer: '_onElementsChanged'
+          return null;
+        }
       },
 
       /**
-       * Mapping of element-name => description
+       * Name of currently selected element
        */
-      _elementNames: {
-        type: Object
-      },
-
-      /**
-       * Currently selected element
-       */
-      element: {
+      _element: {
         type: String,
+        value: "application",
         observer: '_onElementChanged'
       },
 
       /**
-       * Description of currently selected element
+       * Data for the currently selected element
        */
-      _elementDesc: {
-        type: String,
-        computed: '_computeElementDesc(_elementNames, element)'
+      _elementData: {
+        type: Object,
+        computed: '_computeElementData(_elements, _element)'
       },
 
       /**
@@ -930,15 +752,16 @@ Example:
 
     },
 
-    _onElementsChanged: function(elements) {
-      if(elements && elements.length) {
-        this.element = elements[0].element;
-        var names = elements.reduce(function(names, item) {
-          names[item.element] = item.desc;
-          return names;
-        }, {});
-        this.set("_elementNames", names);
+    _computeElementData: function(elements, element) {
+      console.log('updating element data', elements, element);
+      if(elements && element) {
+        for(var i = 0; i < elements.length; i++) {
+          if (elements[i].element === element) {
+            return elements[i];
+          }
+        }
       }
+      return null;
     },
 
     _onElementChanged: function(value) {
@@ -950,19 +773,7 @@ Example:
       this.$.mainPanel.scroller.scrollTop = 0;
     },
 
-    _computeElementDesc: function(names, element) {
-      if(element && names) {
-        return names[element] || "";
-      } else {
-        return "";
-      }
-    },
-
     ready: function() {
-
-      this.$.hydrolysis.src = "../../paper-tabs/paper-tabs.html";
-      this.$.hydrolysis.analyze();
-
       var styleProps = this._findStyleHost()._properties;
       this.set("_styleProps", styleProps);
       var styleKeys = Object.keys(styleProps);
@@ -1093,88 +904,7 @@ Example:
         cb(color);
         this._colorCallback = null;
       }
-    },
-
-    _analyzerChanged: function(analyzer) {
-      var element = analyzer.elements.map(function(item) {
-        var lines = item.desc.split('\n');
-        var customProps = lines.reduce(function(all, line) {
-          var prop = this._parseCustomProp(line);
-          if(prop) {
-            all.push(prop);
-          }
-          return all;
-        }.bind(this), []);
-
-        var props = item.properties.filter(function(item) {
-          return item.name.substring(0,1) !== '_';
-        }).map(function(item) {
-          return {
-            name: item.name,
-            desc: (item.desc || "").trim(),
-            type: item.type,
-            default: item.default
-          };
-        });
-        return {
-          customProps: customProps,
-          is: item.is,
-          href: item.contentHref,
-          props: props
-        };
-      }.bind(this));
-
-      console.log(element);
-
-    },
-
-    _parseCustomProp: function(text) {
-      text = text.trim();
-      var re = /^[\`]*--[a-z\-0-9]+[\s\t ]*|.*|.*$/
-      if (!re.test(text)) {
-        return null;
-      }
-      if (text.length > 4 && text.substring(0, 4) === "----") {
-        return null;
-      }
-      var parts = text.replace(/`/g, "").split("|");
-      if(parts && parts.length === 3) {
-        var name = parts[0].trim();
-        var desc = parts[1].trim();
-        var value = parts[2].trim();
-        if (name.indexOf(' ') > 0) {
-          return null;
-        }
-        var prop = {
-          name: name,
-          desc: desc,
-          default: value
-        };
-
-        if(value.substring(0,1) === "{" && value.substring(value.length - 1) === '}') {
-          prop.default = JSON.parse(value);
-          prop.mixin = true;
-          prop.type = "Mixin";
-        } else if (name.indexOf('color') > 0) {
-          prop.color = true;
-          prop.type = "Color";
-        } else if (name.indexOf('height') > 0) {
-          prop.size = true;
-          prop.type = "Size";
-        } else if (name.indexOf('width') > 0) {
-          prop.size = true;
-          prop.type = "Size";
-        } else {
-          prop.other = true;
-          prop.type = "Unknown";
-        }
-
-        return prop;
-      } else {
-        return null;
-      }
     }
-
   });
 
 })();

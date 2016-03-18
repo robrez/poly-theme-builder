@@ -1,3 +1,4 @@
+<link rel="import" href="../hydrolysis/hydrolysis-analyzer.html">
 <!--
 `poly-element-theme` is used by poly-theme-builder to configure custom properties supported by a given element
 
@@ -109,6 +110,10 @@ Example:
 
   </style>
 
+  <hydrolysis-analyzer id="hydrolysis" analyzer="{{_analyzer}}">
+  </hydrolysis-analyzer>
+
+
   <div class="horizontal-section">
     <div class="title-section layout horizontal justified center wrap">
       <div>
@@ -164,28 +169,17 @@ Example:
 
     properties: {
 
-      /**
-       * Name of the element being configured
-       */
-      elementName: {
-        type: String
+      _analyzer: {
+        type: Object,
+        observer: '_analyzerChanged'
       },
 
       /**
-       * Meta information about custom properties supported
-       * by various elements.
-       */
-      data: {
-        type: Array
-      },
-
-      /**
-       * The data array filtered down to just those items that
-       * are applicable to `elementName`
+       * Meta data about the element
        */
       elementData: {
         type: Object,
-        computed: "_computeElementData(elementName, data)"
+        observer: '_onElementDataChanged'
       },
 
       /**
@@ -232,6 +226,15 @@ Example:
       '_onAnyActiveChanged(_elementProperties.*)',
     ],
 
+    _onElementDataChanged: function(data) {
+      if (!data) {
+        return;
+      }
+      this.$.hydrolysis.src = data.path;
+      this.$.hydrolysis.analyze();
+
+    },
+
     _onAnyActiveChanged: function(change) {
       if(change.path.indexOf(".active")) {
         var props = this._elementProperties;
@@ -249,23 +252,13 @@ Example:
       }
     },
 
-    _computeElementData: function(elementName, data) {
-      if(elementName && data && data.length) {
-        var filtered = data.filter(function(item) {
-          return item.element === elementName;
-        });
-
-        if(filtered && filtered.length) {
-          return filtered[0];
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    },
-
     _updateElementProperties: function(elementData, change) {
+      //TODO figure it out
+      //  currently this is broken! 
+      //  I think the main intent here is to update element-specific properties so that changes to
+      //  "global" properties are pushed into those custom properties that use the global property
+      //  as a default value. EG:  changing default-primary-color has an impact on several elements
+      return;
       var allProperties = change.base;
       var eProps = this._elementProperties;
       var idx = change.path.indexOf(".");
@@ -393,8 +386,113 @@ Example:
       } else {
         return null;
       }
-    }
+    },
 
+    _analyzerChanged: function(analyzer) {
+      console.log(analyzer);
+      var element = analyzer.elements.map(function(item) {
+        var lines = item.desc.split('\n');
+        var customProps = lines.reduce(function(all, line) {
+          var prop = this._parseCustomProp(line);
+          if(prop) {
+            all.push(prop);
+          }
+          return all;
+        }.bind(this), []);
+
+        var props = item.properties.filter(function(item) {
+          return item.name.substring(0,1) !== '_';
+        }).map(function(item) {
+          return {
+            name: item.name,
+            desc: (item.desc || "").trim(),
+            type: item.type,
+            default: item.default
+          };
+        });
+        return {
+          customProps: customProps,
+          is: item.is,
+          href: item.contentHref,
+          props: props
+        };
+      }.bind(this));
+
+      var allProps = [];
+      element.forEach(function(elItem) {
+        var itemProps = elItem.customProps.filter(function(item) {
+            return item.hasOwnProperty("color") && item.color;
+          }.bind(this));
+        itemProps = itemProps.map(function(item, index) {
+          return {
+            property: item,
+            value: item.default,
+            active: false,
+            global: false, //TODO
+            index: allProps.length + index
+          };
+        }.bind(this));
+        allProps.push.apply(allProps, itemProps);
+      }.bind(this));
+
+      console.log(allProps);
+
+      this._elementProperties = allProps;
+
+
+      //TODO create a cache of element-specific settings, so we have an in-memory list of all changes
+      //   eg:  this._cache[elementName] => allProps;
+      // Also skip hydrolysis whenever this._cache[elementName] exists
+      //   eg: this._elementProperties = this._cache[elementName]
+
+    },
+
+    _parseCustomProp: function(text) {
+      text = text.trim();
+      var re = /^[\`]*--[a-z\-0-9]+[\s\t ]*|.*|.*$/
+      if (!re.test(text)) {
+        return null;
+      }
+      if (text.length > 4 && text.substring(0, 4) === "----") {
+        return null;
+      }
+      var parts = text.replace(/`/g, "").split("|");
+      if(parts && parts.length === 3) {
+        var name = parts[0].trim();
+        var desc = parts[1].trim();
+        var value = parts[2].trim();
+        if (name.indexOf(' ') > 0) {
+          return null;
+        }
+        var prop = {
+          name: name,
+          desc: desc,
+          default: value
+        };
+
+        if(value.substring(0,1) === "{" && value.substring(value.length - 1) === '}') {
+          prop.default = JSON.parse(value);
+          prop.mixin = true;
+          prop.type = "Mixin";
+        } else if (name.indexOf('color') > 0) {
+          prop.color = true;
+          prop.type = "Color";
+        } else if (name.indexOf('height') > 0) {
+          prop.size = true;
+          prop.type = "Size";
+        } else if (name.indexOf('width') > 0) {
+          prop.size = true;
+          prop.type = "Size";
+        } else {
+          prop.other = true;
+          prop.type = "Unknown";
+        }
+
+        return prop;
+      } else {
+        return null;
+      }
+    }
 
   });
 

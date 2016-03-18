@@ -1,7 +1,14 @@
+<!--
+`ptb-app-props` is a dummy element. I'm using it so I can consistently use 
+hydrolysis to get all of the custom properties used in the 'application'
+section of poly-theme-builder.
 
-application-global
-this was manually written by me
-Some of the default values are made up
+for the longish-term roadmap, hydrolysis will not happen at runtime, but
+will instead happen as a build step. this element will probably be
+replaced by a plain .json file at that point in time
+
+All of these styles should come from paper-styles/default-theme.html
+
 Custom property | Description | Default
 ----------------|-------------|----------
 `--dark-primary-color` | Dark primary color (700) | `--paper-indigo-700`
@@ -15,3 +22,13 @@ Custom property | Description | Default
 `--disabled-text-color` | Disabled text color | `#bdbdbd`
 `--divider-color` | Divider color | `#B6B6B6`
 
+@group Poly Theme Builder
+@element poly-element-theme
+-->
+<dom-module id="ptb-app-props">
+  <script>
+  Polymer({
+    is: 'ptb-app-props'
+  });
+  </script>
+</dom-module>
